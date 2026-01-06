@@ -6,6 +6,7 @@ import {
   Technique,
   BasicParams,
   DesignParams,
+  ColorOption,
 } from "../state/types";
 import ProductSelector from "../components/ProductSelector";
 import BasicParamsForm from "../components/BasicParams";
@@ -74,7 +75,7 @@ export const CustomizerPage: React.FC = () => {
       if (initialProductData.colors.length > 0) {
         setBasic((prev) => ({
           ...prev,
-          color: initialProductData.colors[0].name,
+          color: initialProductData.colors[0].name as ColorOption,
         }));
       }
     }
