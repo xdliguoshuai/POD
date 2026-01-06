@@ -87,4 +87,11 @@ export class CanvasController {
   ) {
     this.canvasManager.addText(text, options);
   }
+
+  /**
+   * Business logic for adding image
+   */
+  public async addImage(url: string, options?: any) {
+    await this.canvasManager.addImage(url, options);
+  }
 }
