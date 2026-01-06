@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import { ProductType, CustomizationArea } from "../state/types";
 import { Card } from "../ui/Card";
 import {
@@ -21,6 +21,9 @@ import {
   Float,
 } from "@react-three/drei";
 import { TShirtModel, CrewneckModel, HoodieModel } from "./3d/ApparelModels";
+import { CanvasManager } from "../lib/CanvasManager";
+import { CanvasController } from "../lib/CanvasController";
+import * as fabric from "fabric";
 
 interface Props {
   product: ProductType;
@@ -108,6 +111,8 @@ export default function Visualization({
   onViewModeChange,
 }: Props) {
   const [currentView, setCurrentView] = useState<"front" | "back">("front");
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Auto-switch view based on selected area
   useEffect(() => {
@@ -143,6 +148,52 @@ export default function Visualization({
   // Resolve Hex Color for 3D
   const activeHexColor =
     productData?.colors.find((c) => c.name === selectedColor)?.hex || "#ffffff";
+
+  // Initialize Fabric Canvas
+  useEffect(() => {
+    if (viewMode === "2d" && canvasRef.current) {
+      const manager = CanvasManager.init(canvasRef.current, {
+        width: 500, // Initial size, will be resized
+        height: 667,
+        backgroundColor: "#fff",
+        selection: false, // Disable group selection for now
+        controlsAboveOverlay: true,
+      });
+
+      // Initialize Controller
+      const controller = CanvasController.init();
+
+      // Resize observer to handle responsive container
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const { width, height } = entry.contentRect;
+          manager.resize(width, height);
+        }
+      });
+
+      if (containerRef.current) {
+        resizeObserver.observe(containerRef.current);
+      }
+
+      return () => {
+        resizeObserver.disconnect();
+        controller.dispose();
+        manager.dispose();
+      };
+    }
+  }, [viewMode]);
+
+  // Update Background Image
+  useEffect(() => {
+    if (activeImage) {
+      try {
+        const manager = CanvasManager.getInstance();
+        manager.setBackgroundImage(activeImage);
+      } catch (e) {
+        // Manager might not be initialized yet if viewMode is 3d
+      }
+    }
+  }, [activeImage, viewMode]);
 
   return (
     <Card className="h-full w-full border-0 bg-transparent flex flex-col items-center justify-center relative overflow-hidden shadow-none">
@@ -216,18 +267,16 @@ export default function Visualization({
       <div className="relative z-10 w-full h-full flex items-center justify-center p-4 lg:p-8 pt-32 lg:pt-36">
         {/* 2D MODE */}
         {viewMode === "2d" && (
-          <div className="relative w-full max-w-lg aspect-[3/4] bg-white shadow-2xl rounded-sm overflow-hidden transition-all duration-500 animate-in fade-in zoom-in-95">
-            {/* Base Image */}
-            {activeImage ? (
-              <div className="w-full h-full relative">
-                <img
-                  src={activeImage}
-                  alt={`${label} - ${currentView}`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-muted/10">
+          <div
+            ref={containerRef}
+            className="relative w-full max-w-lg aspect-[3/4] bg-white shadow-2xl rounded-sm overflow-hidden transition-all duration-500 animate-in fade-in zoom-in-95"
+          >
+            {/* Fabric Canvas */}
+            <canvas ref={canvasRef} className="w-full h-full block" />
+
+            {/* Placeholder for no image */}
+            {!activeImage && (
+              <div className="absolute inset-0 flex items-center justify-center bg-muted/10 pointer-events-none">
                 {product === "t-shirt" && (
                   <Shirt
                     strokeWidth={1}
@@ -252,10 +301,10 @@ export default function Visualization({
               </div>
             )}
 
-            {/* Print Area Overlay */}
+            {/* Print Area Overlay - Kept as HTML overlay for now to preserve exact look */}
             {isAreaActive ? (
               <div
-                className="absolute border-2 border-primary/80 bg-primary/5 flex flex-col items-center justify-center transition-all duration-300 backdrop-blur-[1px]"
+                className="absolute border-2 border-primary/80 bg-primary/5 flex flex-col items-center justify-center transition-all duration-300 backdrop-blur-[1px] pointer-events-none"
                 style={overlayStyle}
               >
                 <div className="opacity-50 flex flex-col items-center gap-2">
