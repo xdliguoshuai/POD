@@ -1,45 +1,56 @@
-import { ProductType } from '../state/types'
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card'
-import { Button } from '../ui/Button'
-import { Shirt, Hexagon, Component } from 'lucide-react'
+import { ProductType } from "../state/types";
+import { Card, CardHeader, CardTitle, CardContent } from "../ui/Card";
+
+import { Button } from "antd";
+import { Shirt, Hexagon, Component } from "lucide-react";
 
 interface Props {
-  value: ProductType
-  onChange: (v: ProductType) => void
-  onReset: () => void
+  value: ProductType;
+  onChange: (v: ProductType) => void;
+  onReset: () => void;
 }
 
 export default function ProductSelector({ value, onChange, onReset }: Props) {
   return (
     <Card className="shadow-none border-0 bg-transparent">
       <CardHeader className="px-0 pt-0 pb-4">
-        <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">Product Type</CardTitle>
+        <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
+          Product Type
+        </CardTitle>
       </CardHeader>
       <CardContent className="px-0 grid grid-cols-3 gap-3">
-        {(['t-shirt', 'sweatshirt', 'hoodie'] as ProductType[]).map(t => {
-          const isActive = value === t
+        {(["t-shirt", "sweatshirt", "hoodie"] as ProductType[]).map((t) => {
+          const isActive = value === t;
           return (
             <Button
               key={t}
-              variant={isActive ? 'default' : 'outline'}
-              className={`h-24 flex-col gap-2 ${isActive ? 'ring-2 ring-primary ring-offset-2' : 'hover:border-primary/50'}`}
+              type={isActive ? "primary" : "default"}
+              className={`h-24 flex flex-col gap-2 items-center justify-center ${
+                isActive
+                  ? "ring-2 ring-primary ring-offset-2"
+                  : "hover:border-primary/50"
+              }`}
               onClick={() => {
                 if (value !== t) {
-                  onChange(t)
-                  onReset()
+                  onChange(t);
+                  onReset();
                 }
               }}
             >
-              {t === 't-shirt' && <Shirt className="h-6 w-6" />}
-              {t === 'sweatshirt' && <Hexagon className="h-6 w-6" />}
-              {t === 'hoodie' && <Component className="h-6 w-6" />}
-              <span className="text-xs font-medium">
-                {t === 't-shirt' ? 'T-Shirt' : t === 'sweatshirt' ? 'Crewneck' : 'Hoodie'}
+              {t === "t-shirt" && <Shirt className="h-6 w-6" />}
+              {t === "sweatshirt" && <Hexagon className="h-6 w-6" />}
+              {t === "hoodie" && <Component className="h-6 w-6" />}
+              <span className="text-xs font-medium block mt-1">
+                {t === "t-shirt"
+                  ? "T-Shirt"
+                  : t === "sweatshirt"
+                  ? "Crewneck"
+                  : "Hoodie"}
               </span>
             </Button>
-          )
+          );
         })}
       </CardContent>
     </Card>
-  )
+  );
 }
