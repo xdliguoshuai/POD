@@ -168,14 +168,7 @@ export const CustomizerPage: React.FC = () => {
 
             {activeTab === "text" && (
               <SidebarSection title="Text Editor" required defaultOpen={true}>
-                <TextLayerInput
-                  text={textConfig.text}
-                  font={textConfig.font}
-                  color={textConfig.color}
-                  onChange={(updates) =>
-                    setTextConfig((prev) => ({ ...prev, ...updates }))
-                  }
-                />
+                <TextLayerInput onAdd={() => setActiveTab("layers")} />
               </SidebarSection>
             )}
 

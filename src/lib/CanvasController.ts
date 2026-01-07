@@ -106,12 +106,48 @@ export class CanvasController {
     CanvasController.instance = null;
   }
 
+  public getActiveObject() {
+    return this.canvas.getActiveObject();
+  }
+
+  public updateObjectProperty(obj: fabric.Object, key: string, value: any) {
+    obj.set(key as any, value);
+    this.canvas.requestRenderAll();
+    this.notifyListeners();
+  }
+  /**
+   * Reorder a layer (object) in the canvas stack
+   */
+  public reorderLayer(oldIndex: number, newIndex: number) {
+    const objects = this.canvas.getObjects();
+    const obj = objects[oldIndex];
+    if (!obj) return;
+
+    // In Fabric.js 7+, we use canvas.insertAt to reorder
+    this.canvas.remove(obj);
+    this.canvas.insertAt(newIndex, obj);
+    this.canvas.requestRenderAll();
+    this.notifyListeners();
+  }
+
   /**
    * Business logic for adding text
    */
   public addText(
     text: string,
-    options?: { fontFamily?: string; fill?: string }
+    options?: {
+      fontFamily?: string;
+      fill?: string;
+      fontSize?: number;
+      textAlign?:
+        | "left"
+        | "center"
+        | "right"
+        | "justify"
+        | "justify-left"
+        | "justify-center"
+        | "justify-right";
+    }
   ) {
     this.canvasManager.addText(text, options);
   }
