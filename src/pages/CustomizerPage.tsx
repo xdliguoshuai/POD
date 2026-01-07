@@ -174,7 +174,7 @@ export const CustomizerPage: React.FC = () => {
 
             {activeTab === "uploads" && (
               <SidebarSection title="Uploads" required defaultOpen={true}>
-                <UploadsTab />
+                <UploadsTab onAdd={() => setActiveTab("layers")} />
               </SidebarSection>
             )}
 

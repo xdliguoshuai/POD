@@ -6,6 +6,7 @@ import { useLayers } from "../../hooks/useLayers";
 import { CanvasController } from "../../lib/CanvasController";
 import { cn } from "../../lib/utils";
 import { TextPropertyPanel } from "./TextPropertyPanel";
+import { ImagePropertyPanel } from "./ImagePropertyPanel";
 
 // DnD Kit Imports
 import {
@@ -163,8 +164,13 @@ export function LayersTab() {
 
   const activeLayer = layers.find((l) => l.active);
 
-  if (showDetail && activeLayer && activeLayer.type === "i-text") {
-    return <TextPropertyPanel onBack={() => setShowDetail(false)} />;
+  if (showDetail && activeLayer) {
+    if (activeLayer.type === "i-text") {
+      return <TextPropertyPanel onBack={() => setShowDetail(false)} />;
+    }
+    if (activeLayer.type === "image" || activeLayer.type === "fabric.Image") {
+      return <ImagePropertyPanel onBack={() => setShowDetail(false)} />;
+    }
   }
 
   if (layers.length === 0) {
@@ -219,7 +225,11 @@ export function LayersTab() {
                 layer={layer}
                 onSelect={(l) => {
                   controller.selectObject(l.ref);
-                  if (l.type === "i-text") {
+                  if (
+                    l.type === "i-text" ||
+                    l.type === "image" ||
+                    l.type === "fabric.Image"
+                  ) {
                     setShowDetail(true);
                   }
                 }}
