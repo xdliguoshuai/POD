@@ -8,6 +8,7 @@ import {
   ConfigProvider,
   Space,
   Tooltip,
+  Switch,
 } from "antd";
 import {
   Bold,
@@ -101,6 +102,14 @@ export const TextPropertyPanel: React.FC<TextPropertyPanelProps> = ({
     underline: false,
     charSpacing: 0,
     lineHeight: 1.16,
+    stroke: "#000000",
+    strokeWidth: 0,
+    shadowColor: "rgba(0,0,0,0.3)",
+    shadowBlur: 0,
+    shadowOffsetX: 0,
+    shadowOffsetY: 0,
+    outlineEnabled: false,
+    shadowEnabled: false,
   });
 
   useEffect(() => {
@@ -116,6 +125,14 @@ export const TextPropertyPanel: React.FC<TextPropertyPanelProps> = ({
         underline: activeObject.underline || false,
         charSpacing: activeObject.charSpacing || 0,
         lineHeight: activeObject.lineHeight || 1.16,
+        stroke: activeObject.stroke || "#000000",
+        strokeWidth: activeObject.strokeWidth || 0,
+        shadowColor: activeObject.shadow?.color || "rgba(0,0,0,0.3)",
+        shadowBlur: activeObject.shadow?.blur || 0,
+        shadowOffsetX: activeObject.shadow?.offsetX || 0,
+        shadowOffsetY: activeObject.shadow?.offsetY || 0,
+        outlineEnabled: (activeObject.strokeWidth || 0) > 0,
+        shadowEnabled: !!activeObject.shadow,
       });
     }
   }, [activeObject]);
@@ -146,9 +163,59 @@ export const TextPropertyPanel: React.FC<TextPropertyPanelProps> = ({
       setLoading(false);
     }
 
-    setProperties((prev) => ({ ...prev, [key]: value }));
+    const newProperties = { ...properties, [key]: value };
+    setProperties(newProperties);
+
     if (activeObject) {
-      controller.updateObjectProperty(activeObject, key, value);
+      if (key === "outlineEnabled") {
+        if (!value) {
+          controller.updateObjectProperty(activeObject, "strokeWidth", 0);
+        } else {
+          controller.updateObjectProperty(
+            activeObject,
+            "strokeWidth",
+            properties.strokeWidth || 1
+          );
+          controller.updateObjectProperty(activeObject, "paintFirst", "stroke");
+        }
+      } else if (key === "shadowEnabled") {
+        if (!value) {
+          controller.updateObjectProperty(activeObject, "shadow", null);
+        } else {
+          const shadowOptions = {
+            color: properties.shadowColor,
+            blur: properties.shadowBlur,
+            offsetX: properties.shadowOffsetX,
+            offsetY: properties.shadowOffsetY,
+          };
+          controller.updateObjectProperty(
+            activeObject,
+            "shadow",
+            shadowOptions
+          );
+        }
+      } else if (key.startsWith("shadow")) {
+        if (newProperties.shadowEnabled) {
+          const shadowOptions = {
+            color: newProperties.shadowColor,
+            blur: newProperties.shadowBlur,
+            offsetX: newProperties.shadowOffsetX,
+            offsetY: newProperties.shadowOffsetY,
+          };
+          controller.updateObjectProperty(
+            activeObject,
+            "shadow",
+            shadowOptions
+          );
+        }
+      } else if (key === "strokeWidth" || key === "stroke") {
+        if (newProperties.outlineEnabled) {
+          controller.updateObjectProperty(activeObject, "paintFirst", "stroke");
+          controller.updateObjectProperty(activeObject, key, value);
+        }
+      } else {
+        controller.updateObjectProperty(activeObject, key, value);
+      }
     }
   };
 
@@ -384,6 +451,132 @@ export const TextPropertyPanel: React.FC<TextPropertyPanelProps> = ({
               tooltip={{ open: false }}
             />
           </div>
+        </div>
+
+        {/* Outline */}
+        <div className="space-y-4 pt-4 border-t">
+          <div className="flex justify-between items-center">
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Outline
+            </label>
+            <Switch
+              size="small"
+              checked={properties.outlineEnabled}
+              onChange={(val) => handlePropertyChange("outlineEnabled", val)}
+            />
+          </div>
+          {properties.outlineEnabled && (
+            <div className="flex gap-3 items-center animate-in fade-in slide-in-from-top-2">
+              <ColorPicker
+                value={properties.stroke}
+                onChange={(c) =>
+                  handlePropertyChange("stroke", c.toHexString())
+                }
+                showText
+              />
+              <div className="flex-1 space-y-1">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] text-muted-foreground">
+                    Weight
+                  </span>
+                  <span className="text-[10px] font-mono font-bold">
+                    {properties.strokeWidth}px
+                  </span>
+                </div>
+                <Slider
+                  min={0}
+                  max={20}
+                  value={properties.strokeWidth}
+                  onChange={(val) => handlePropertyChange("strokeWidth", val)}
+                  tooltip={{ open: false }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Shadow */}
+        <div className="space-y-4 pt-4 border-t">
+          <div className="flex justify-between items-center">
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Shadow
+            </label>
+            <Switch
+              size="small"
+              checked={properties.shadowEnabled}
+              onChange={(val) => handlePropertyChange("shadowEnabled", val)}
+            />
+          </div>
+          {properties.shadowEnabled && (
+            <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
+              <div className="flex gap-3 items-center">
+                <ColorPicker
+                  value={properties.shadowColor}
+                  onChange={(c) =>
+                    handlePropertyChange("shadowColor", c.toRgbString())
+                  }
+                  showText
+                />
+                <div className="flex-1 space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] text-muted-foreground">
+                      Blur
+                    </span>
+                    <span className="text-[10px] font-mono font-bold">
+                      {properties.shadowBlur}
+                    </span>
+                  </div>
+                  <Slider
+                    min={0}
+                    max={50}
+                    value={properties.shadowBlur}
+                    onChange={(val) => handlePropertyChange("shadowBlur", val)}
+                    tooltip={{ open: false }}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] text-muted-foreground">
+                      Offset X
+                    </span>
+                    <span className="text-[10px] font-mono font-bold">
+                      {properties.shadowOffsetX}
+                    </span>
+                  </div>
+                  <Slider
+                    min={-50}
+                    max={50}
+                    value={properties.shadowOffsetX}
+                    onChange={(val) =>
+                      handlePropertyChange("shadowOffsetX", val)
+                    }
+                    tooltip={{ open: false }}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] text-muted-foreground">
+                      Offset Y
+                    </span>
+                    <span className="text-[10px] font-mono font-bold">
+                      {properties.shadowOffsetY}
+                    </span>
+                  </div>
+                  <Slider
+                    min={-50}
+                    max={50}
+                    value={properties.shadowOffsetY}
+                    onChange={(val) =>
+                      handlePropertyChange("shadowOffsetY", val)
+                    }
+                    tooltip={{ open: false }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </ConfigProvider>
