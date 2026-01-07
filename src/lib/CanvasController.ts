@@ -6,6 +6,8 @@ export class CanvasController {
   private canvas: fabric.Canvas;
   private canvasManager: CanvasManager;
 
+  private listeners: Set<() => void> = new Set();
+
   private constructor() {
     this.canvasManager = CanvasManager.getInstance();
     this.canvas = this.canvasManager.canvas;
@@ -31,6 +33,12 @@ export class CanvasController {
     // Mouse Events
     this.canvas.on("selection:created", this.onSelectionCreated);
     this.canvas.on("selection:cleared", this.onSelectionCleared);
+    this.canvas.on("selection:updated", this.onSelectionUpdated);
+
+    // Object Events
+    this.canvas.on("object:added", this.notifyListeners);
+    this.canvas.on("object:removed", this.notifyListeners);
+    this.canvas.on("object:modified", this.notifyListeners);
 
     // Keyboard Events
     window.addEventListener("keydown", this.onKeyDown);
@@ -39,16 +47,36 @@ export class CanvasController {
   private unbindEvents() {
     this.canvas.off("selection:created", this.onSelectionCreated);
     this.canvas.off("selection:cleared", this.onSelectionCleared);
+    this.canvas.off("selection:updated", this.onSelectionUpdated);
+    this.canvas.off("object:added", this.notifyListeners);
+    this.canvas.off("object:removed", this.notifyListeners);
+    this.canvas.off("object:modified", this.notifyListeners);
     window.removeEventListener("keydown", this.onKeyDown);
   }
 
   private onSelectionCreated = (e: any) => {
     console.log("Selection created", e);
+    this.notifyListeners();
   };
 
   private onSelectionCleared = (e: any) => {
     console.log("Selection cleared", e);
+    this.notifyListeners();
   };
+
+  private onSelectionUpdated = (e: any) => {
+    console.log("Selection updated", e);
+    this.notifyListeners();
+  };
+
+  private notifyListeners = () => {
+    this.listeners.forEach((listener) => listener());
+  };
+
+  public subscribe(listener: () => void) {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
 
   private onKeyDown = (e: KeyboardEvent) => {
     // Check if we should ignore the key event (e.g., typing in an input)
@@ -93,5 +121,77 @@ export class CanvasController {
    */
   public async addImage(url: string, options?: any) {
     await this.canvasManager.addImage(url, options);
+  }
+
+  /**
+   * Layer Management
+   */
+  public getLayers() {
+    const objects = this.canvas.getObjects();
+    const activeObjects = this.canvas.getActiveObjects();
+
+    return objects
+      .map((obj: any) => ({
+        id: obj.id || Math.random().toString(36).substr(2, 9),
+        type: obj.type,
+        name: obj.name || (obj.type === "i-text" ? obj.text : "Image"),
+        visible: obj.visible,
+        locked: obj.lockMovementX || false,
+        active: activeObjects.includes(obj),
+        ref: obj,
+      }))
+      .reverse(); // Top layers first
+  }
+
+  public toggleVisibility(obj: fabric.Object) {
+    obj.set("visible", !obj.visible);
+    this.canvas.requestRenderAll();
+    this.notifyListeners();
+  }
+
+  public toggleLock(obj: fabric.Object) {
+    const isLocked = !obj.lockMovementX;
+    obj.set({
+      lockMovementX: isLocked,
+      lockMovementY: isLocked,
+      lockRotation: isLocked,
+      lockScalingX: isLocked,
+      lockScalingY: isLocked,
+      hasControls: !isLocked,
+    });
+    this.canvas.requestRenderAll();
+    this.notifyListeners();
+  }
+
+  public deleteObject(obj: fabric.Object) {
+    this.canvas.remove(obj);
+    this.canvas.discardActiveObject();
+    this.canvas.requestRenderAll();
+    this.notifyListeners();
+  }
+
+  public selectObject(obj: fabric.Object) {
+    this.canvas.setActiveObject(obj);
+    this.canvas.requestRenderAll();
+    this.notifyListeners();
+  }
+
+  public reorderObject(obj: fabric.Object, direction: "up" | "down") {
+    if (direction === "up") {
+      this.canvas.bringObjectForward(obj);
+    } else {
+      this.canvas.sendObjectBackwards(obj);
+    }
+    this.canvas.requestRenderAll();
+    this.notifyListeners();
+  }
+
+  public clearAll() {
+    this.canvas.getObjects().forEach((obj) => {
+      this.canvas.remove(obj);
+    });
+    this.canvas.discardActiveObject();
+    this.canvas.requestRenderAll();
+    this.notifyListeners();
   }
 }
