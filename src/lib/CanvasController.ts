@@ -34,6 +34,7 @@ export class CanvasController {
     this.canvas.on("selection:created", this.onSelectionCreated);
     this.canvas.on("selection:cleared", this.onSelectionCleared);
     this.canvas.on("selection:updated", this.onSelectionUpdated);
+    this.canvas.on("mouse:wheel", this.onMouseWheel);
 
     // Object Events
     this.canvas.on("object:added", this.notifyListeners);
@@ -48,6 +49,7 @@ export class CanvasController {
     this.canvas.off("selection:created", this.onSelectionCreated);
     this.canvas.off("selection:cleared", this.onSelectionCleared);
     this.canvas.off("selection:updated", this.onSelectionUpdated);
+    this.canvas.off("mouse:wheel", this.onMouseWheel);
     this.canvas.off("object:added", this.notifyListeners);
     this.canvas.off("object:removed", this.notifyListeners);
     this.canvas.off("object:modified", this.notifyListeners);
@@ -67,6 +69,22 @@ export class CanvasController {
   private onSelectionUpdated = (e: any) => {
     console.log("Selection updated", e);
     this.notifyListeners();
+  };
+
+  private onMouseWheel = (opt: any) => {
+    const delta = opt.e.deltaY;
+    let zoom = this.canvas.getZoom();
+    debugger;
+    zoom *= 0.999 ** delta;
+    console.log("Zoom", zoom);
+    if (zoom < 1) zoom = 1;
+    if (zoom > 3) zoom = 3;
+    this.canvas.zoomToPoint(
+      new fabric.Point(opt.e.offsetX, opt.e.offsetY),
+      zoom
+    );
+    opt.e.preventDefault();
+    opt.e.stopPropagation();
   };
 
   private notifyListeners = () => {
@@ -111,7 +129,16 @@ export class CanvasController {
   }
 
   public updateObjectProperty(obj: fabric.Object, key: string, value: any) {
-    obj.set(key as any, value);
+    if (
+      key === "shadow" &&
+      value &&
+      typeof value === "object" &&
+      !(value instanceof fabric.Shadow)
+    ) {
+      obj.set("shadow", new fabric.Shadow(value));
+    } else {
+      obj.set(key as any, value);
+    }
 
     // If it's a text object, we need to recalculate dimensions and coordinates
     // especially after font changes or text updates to ensure the bounding box is correct.
