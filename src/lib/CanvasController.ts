@@ -112,6 +112,21 @@ export class CanvasController {
 
   public updateObjectProperty(obj: fabric.Object, key: string, value: any) {
     obj.set(key as any, value);
+
+    // If it's a text object, we need to recalculate dimensions and coordinates
+    // especially after font changes or text updates to ensure the bounding box is correct.
+    if (
+      obj.type === "i-text" ||
+      obj.type === "text" ||
+      obj.type === "textbox"
+    ) {
+      const textObj = obj as any;
+      if (textObj.initDimensions) {
+        textObj.initDimensions();
+      }
+      obj.setCoords();
+    }
+
     this.canvas.requestRenderAll();
     this.notifyListeners();
   }

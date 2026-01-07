@@ -21,6 +21,7 @@ import {
 import { CanvasController } from "../../lib/CanvasController";
 import { useActiveObject } from "../../hooks/useActiveObject";
 import { cn } from "../../lib/utils";
+import { useLoading } from "../../hooks/useLoading";
 
 const { TextArea } = Input;
 
@@ -32,12 +33,36 @@ const THEME = {
 };
 
 const FONTS = [
-  { value: "Inter", label: "Inter" },
-  { value: "Roboto", label: "Roboto" },
-  { value: "Montserrat", label: "Montserrat" },
-  { value: "Playfair Display", label: "Playfair Display" },
-  { value: "Oswald", label: "Oswald" },
-  { value: "Pacifico", label: "Pacifico" },
+  {
+    value: "Inter",
+    label: "Inter",
+    url: "https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2",
+  },
+  {
+    value: "Roboto",
+    label: "Roboto",
+    url: "https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2",
+  },
+  {
+    value: "Montserrat",
+    label: "Montserrat",
+    url: "https://fonts.gstatic.com/s/montserrat/v26/JTUSjIg1_i6t8kCHKm4df9GR7m3FVHMddw.woff2",
+  },
+  {
+    value: "Playfair Display",
+    label: "Playfair Display",
+    url: "https://fonts.gstatic.com/s/playfairdisplay/v37/6nuq77eU9_939Y8u1q1500cZbyHxl_H8dKVZ_Y8h.woff2",
+  },
+  {
+    value: "Oswald",
+    label: "Oswald",
+    url: "https://fonts.gstatic.com/s/oswald/v49/TK3iWkUHHAIjg752GT8G.woff2",
+  },
+  {
+    value: "Pacifico",
+    label: "Pacifico",
+    url: "https://fonts.gstatic.com/s/pacifico/v22/FwZY7WnLByS6J50ceZ67.woff2",
+  },
 ];
 
 const RECENT_COLORS = [
@@ -54,11 +79,15 @@ interface TextPropertyPanelProps {
   onBack: () => void;
 }
 
+// Module-level cache to track successfully loaded fonts across component renders
+const loadedFonts = new Set<string>(["Inter"]); // Inter is our default/system font
+
 export const TextPropertyPanel: React.FC<TextPropertyPanelProps> = ({
   onBack,
 }) => {
   const activeObject = useActiveObject() as any;
   const controller = CanvasController.getInstance();
+  const { setLoading } = useLoading();
 
   // Local state for properties to ensure smooth UI (syncing from activeObject)
   const [properties, setProperties] = useState({
@@ -91,7 +120,32 @@ export const TextPropertyPanel: React.FC<TextPropertyPanelProps> = ({
     }
   }, [activeObject]);
 
-  const handlePropertyChange = (key: string, value: any) => {
+  const loadFont = async (fontFamily: string) => {
+    const font = FONTS.find((f) => f.value === fontFamily);
+    if (!font || !font.url) return;
+
+    try {
+      // Use local Set for reliable tracking instead of document.fonts.check
+      if (loadedFonts.has(fontFamily)) {
+        return;
+      }
+
+      const fontFace = new FontFace(fontFamily, `url(${font.url})`);
+      const loadedFace = await fontFace.load();
+      document.fonts.add(loadedFace);
+      loadedFonts.add(fontFamily);
+    } catch (error) {
+      console.error(`Failed to load font: ${fontFamily}`, error);
+    }
+  };
+
+  const handlePropertyChange = async (key: string, value: any) => {
+    if (key === "fontFamily") {
+      setLoading(true);
+      await loadFont(value);
+      setLoading(false);
+    }
+
     setProperties((prev) => ({ ...prev, [key]: value }));
     if (activeObject) {
       controller.updateObjectProperty(activeObject, key, value);
