@@ -19,7 +19,7 @@ export const HomePage: React.FC = () => {
   return (
     <div className="flex flex-col">
       {/* 1. Hero Section - Updated */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-[#0d2e1f] to-[#1a472a]">
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-black/40 to-primary">
         <div className="container px-4 md:px-6 mx-auto relative z-10 grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8 max-w-2xl">
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white leading-[1.1]">
@@ -46,7 +46,7 @@ export const HomePage: React.FC = () => {
               <Link to="/products">
                 <Button
                   size="large"
-                  className="w-full sm:w-auto h-14 text-base px-8 bg-white hover:bg-white/90 text-[#1a472a] border-none shadow-lg hover:scale-105 transition-all duration-300"
+                  className="w-full sm:w-auto h-14 text-base px-8 bg-white hover:bg-white/90 text-primary border-none shadow-lg hover:scale-105 transition-all duration-300"
                 >
                   Explore Collection
                 </Button>
@@ -72,8 +72,8 @@ export const HomePage: React.FC = () => {
             </div>
             {/* Floating UI Elements */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/90 backdrop-blur shadow-lg border rounded-lg p-4 flex items-center gap-3 z-30 animate-in fade-in zoom-in duration-1000 delay-300">
-              <div className="h-3 w-3 rounded-full bg-[#1a472a] animate-pulse" />
-              <span className="text-sm font-medium text-[#1a472a]">
+              <div className="h-3 w-3 rounded-full bg-primary animate-pulse" />
+              <span className="text-sm font-medium text-primary">
                 Print File Validated
               </span>
             </div>

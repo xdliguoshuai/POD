@@ -89,7 +89,7 @@ export function FixedBottomBanner({ results, cost, onAddToCart }: Props) {
                 ? "text-destructive"
                 : hasRisks
                 ? "text-amber-600"
-                : "text-emerald-600"
+                : "text-primary"
             )}
             onMouseEnter={() => setShowStatusDetails(true)}
             onMouseLeave={() => setShowStatusDetails(false)}
@@ -127,7 +127,7 @@ export function FixedBottomBanner({ results, cost, onAddToCart }: Props) {
                         check.warning
                           ? "text-amber-500"
                           : check.valid
-                          ? "text-emerald-600"
+                          ? "text-primary"
                           : "text-destructive"
                       )}
                     >
@@ -161,7 +161,7 @@ export function FixedBottomBanner({ results, cost, onAddToCart }: Props) {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <CheckCircle2 size={12} className="text-emerald-600" />
+                    <CheckCircle2 size={12} className="text-primary" />
                     <span>AI Design Analysis Complete</span>
                   </div>
                 </div>

@@ -108,12 +108,12 @@ export function VerticalTabsSidebar({ activeTab, onTabChange, children }: Props)
                                 isActive 
                                     ? "bg-primary text-primary-foreground shadow-sm" 
                                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                                showGlow && "shadow-[0_0_15px_rgba(26,71,42,0.4)] ring-1 ring-[#1a472a]/20 bg-emerald-50/50"
+                                showGlow && "shadow-[0_0_15px_hsl(var(--primary)/0.4)] ring-1 ring-primary/20 bg-primary/5"
                             )}
                             title={tab.label}
                         >
-                            <tab.icon size={20} strokeWidth={isActive ? 2 : 1.5} className={cn(showGlow && "animate-pulse text-[#1a472a]")} />
-                            <span className={cn("text-[10px] font-medium tracking-tight", showGlow && "text-[#1a472a] font-semibold")}>{tab.label}</span>
+                            <tab.icon size={20} strokeWidth={isActive ? 2 : 1.5} className={cn(showGlow && "animate-pulse text-primary")} />
+                            <span className={cn("text-[10px] font-medium tracking-tight", showGlow && "text-primary font-semibold")}>{tab.label}</span>
                             
                             {/* Active Indicator Dot (Only visible when collapsed) */}
                             {!isOpen && isActive && (
@@ -123,8 +123,8 @@ export function VerticalTabsSidebar({ activeTab, onTabChange, children }: Props)
                             {/* New User Discovery Pulse */}
                             {showGlow && (
                                 <span className="absolute top-2 right-2 flex h-2 w-2">
-                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                                 </span>
                             )}
                         </button>

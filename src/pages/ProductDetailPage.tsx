@@ -175,8 +175,8 @@ export const ProductDetailPage: React.FC = () => {
               <Link to={`/customize?product=${product.id}`} className="flex-1">
                 <Button
                   size="large"
-                  type="primary"
-                  className="w-full text-lg h-14 shadow-lg shadow-primary/10 flex items-center justify-center"
+                  type="default"
+                  className="w-full text-lg h-14 bg-primary text-white hover:bg-primary/90 border-none shadow-lg shadow-primary/10 flex items-center justify-center"
                 >
                   Customize Now <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>

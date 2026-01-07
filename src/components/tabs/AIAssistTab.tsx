@@ -86,7 +86,7 @@ export function AIAssistTab({
               <span
                 className={
                   results.dpi === "ok"
-                    ? "text-emerald-600 font-medium"
+                    ? "text-primary font-medium"
                     : "text-amber-600 font-medium"
                 }
               >
@@ -98,7 +98,7 @@ export function AIAssistTab({
               <span
                 className={
                   results.margins === "ok"
-                    ? "text-emerald-600 font-medium"
+                    ? "text-primary font-medium"
                     : "text-amber-600 font-medium"
                 }
               >
@@ -110,7 +110,7 @@ export function AIAssistTab({
               <span
                 className={
                   results.contrast === "ok"
-                    ? "text-emerald-600 font-medium"
+                    ? "text-primary font-medium"
                     : "text-amber-600 font-medium"
                 }
               >
