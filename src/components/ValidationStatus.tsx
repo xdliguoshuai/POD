@@ -21,11 +21,11 @@ export default function ValidationStatus({ results }: { results: ValidationResul
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                     {/* Status Dot: Use distinct functional colors, NOT theme color */}
-                    <div className={cn("h-2 w-2 rounded-full", hasIssues ? "bg-amber-500" : "bg-emerald-500")} />
+                    <div className={cn("h-2 w-2 rounded-full", hasIssues ? "bg-amber-500" : "bg-primary")} />
                     <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">System Status</span>
                 </div>
                 {!hasIssues && (
-                     <span className="text-xs text-emerald-600 font-medium">All systems operational</span>
+                     <span className="text-xs text-primary font-medium">All systems operational</span>
                 )}
             </div>
             
@@ -47,7 +47,7 @@ export default function ValidationStatus({ results }: { results: ValidationResul
                 })}
                  {!hasIssues && (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground py-1">
-                        <CheckCircle2 size={16} className="text-emerald-600/80" />
+                        <CheckCircle2 size={16} className="text-primary/80" />
                         <span>Ready for production.</span>
                     </div>
                 )}

@@ -39,10 +39,10 @@ export function DesignsTab() {
       </div>
 
       <Button
-        type="primary"
+        type="default"
         block
         icon={<Save size={16} />}
-        className="flex items-center justify-center"
+        className="flex items-center justify-center bg-primary text-white hover:bg-primary/90 border-none"
       >
         Save Current Design
       </Button>

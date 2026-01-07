@@ -17,12 +17,11 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    /* Primary: Deep Forest Green (Cool Evergreen) 
-       HSL: 165 45% 18% (approx #194236)
-       A deep, cool green that feels almost black but distinctly botanical.
+    /* Primary: Deep Forest Green (Brand Color #1a472a) 
+       HSL: 141 46% 19%
     */
-    --primary: 165 45% 18%;
-    --primary-foreground: 160 30% 96%;
+    --primary: 141 46% 19%;
+    --primary-foreground: 145 30% 96%;
 
     /* Secondary: Very Light Cool Gray (Zinc-100) - Subtle */
     --secondary: 240 4.8% 95.9%;
@@ -33,10 +32,10 @@
     --muted-foreground: 240 3.8% 46.1%;
 
     /* Accent: Very Light Greenish Gray - Hover states
-       HSL: 165 20% 96%
+       HSL: 141 20% 96%
     */
-    --accent: 165 20% 96%;
-    --accent-foreground: 165 45% 18%;
+    --accent: 141 20% 96%;
+    --accent-foreground: 141 46% 19%;
 
     /* Destructive: Low Saturation Red (Muted) */
     --destructive: 0 60% 50%;
@@ -81,7 +80,7 @@
  
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 165 45% 40%;
+    --ring: 141 46% 40%;
   }
 }
 

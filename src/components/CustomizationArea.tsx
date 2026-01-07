@@ -51,8 +51,9 @@ export default function CustomizationAreaSelector({
           return (
             <Button
               key={a}
-              type={isActive ? "primary" : "default"}
+              type="default"
               size="small"
+              className={isActive ? "bg-primary text-white hover:bg-primary/90 border-none" : ""}
               onClick={() => {
                 if (isActive) {
                   onChange(value.filter((v) => v !== a));

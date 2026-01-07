@@ -37,9 +37,10 @@ export default function TechniqueSelector({
           return (
             <Button
               key={t}
-              type={isActive ? "primary" : "default"}
+              type="default"
               size="small"
               disabled={disabled}
+              className={isActive ? "bg-primary text-white hover:bg-primary/90 border-none" : ""}
               onClick={() => onChange(t)}
             >
               {t === "dtg" ? "DTG Printing" : "Embroidery"}

@@ -43,7 +43,7 @@ export const MainLayout: React.FC = () => {
           <div className="flex items-center gap-8">
             <Link
               to="/"
-              className="text-xl font-bold tracking-tight text-[#1a472a]"
+              className="text-xl font-bold tracking-tight text-primary"
             >
               MODULA
             </Link>
@@ -53,7 +53,7 @@ export const MainLayout: React.FC = () => {
               <div className="group relative">
                 <Link
                   to="/products"
-                  className="flex items-center gap-1 text-[#1a472a]/80 hover:text-[#1a472a] transition-colors py-2"
+                  className="flex items-center gap-1 text-primary/80 hover:text-primary transition-colors py-2"
                 >
                   Collection{" "}
                   <ChevronDown
@@ -66,19 +66,19 @@ export const MainLayout: React.FC = () => {
                   <div className="p-2 flex flex-col gap-1">
                     <Link
                       to="/products?type=t-shirt"
-                      className="px-3 py-2 text-sm text-[#1a472a]/80 hover:bg-[#1a472a]/5 hover:text-[#1a472a] rounded-md"
+                      className="px-3 py-2 text-sm text-primary/80 hover:bg-primary/5 hover:text-primary rounded-md"
                     >
                       T-Shirts
                     </Link>
                     <Link
                       to="/products?type=hoodie"
-                      className="px-3 py-2 text-sm text-[#1a472a]/80 hover:bg-[#1a472a]/5 hover:text-[#1a472a] rounded-md"
+                      className="px-3 py-2 text-sm text-primary/80 hover:bg-primary/5 hover:text-primary rounded-md"
                     >
                       Hoodies
                     </Link>
                     <Link
                       to="/products?type=sweatshirt"
-                      className="px-3 py-2 text-sm text-[#1a472a]/80 hover:bg-[#1a472a]/5 hover:text-[#1a472a] rounded-md"
+                      className="px-3 py-2 text-sm text-primary/80 hover:bg-primary/5 hover:text-primary rounded-md"
                     >
                       Sweatshirts
                     </Link>
@@ -87,13 +87,13 @@ export const MainLayout: React.FC = () => {
               </div>
               <Link
                 to="/about"
-                className="text-[#1a472a]/80 hover:text-[#1a472a] transition-colors"
+                className="text-primary/80 hover:text-primary transition-colors"
               >
                 Studio
               </Link>
               <Link
                 to="/journal"
-                className="text-[#1a472a]/80 hover:text-[#1a472a] transition-colors"
+                className="text-primary/80 hover:text-primary transition-colors"
               >
                 Journal
               </Link>
@@ -106,7 +106,7 @@ export const MainLayout: React.FC = () => {
               type="text"
               shape="circle"
               icon={<Search className="h-5 w-5" />}
-              className="text-[#1a472a]/80 hover:text-[#1a472a] hover:bg-[#1a472a]/5"
+              className="text-primary/80 hover:text-primary hover:bg-primary/5"
             />
 
             {/* AI Shortcut */}
@@ -115,8 +115,8 @@ export const MainLayout: React.FC = () => {
                 type="text"
                 shape="circle"
                 className={cn(
-                  "text-[#1a472a]/80 hover:text-[#1a472a] hover:bg-[#1a472a]/5 relative flex items-center justify-center",
-                  showAiPulse && "bg-[#1a472a]/10 text-[#1a472a]"
+                  "text-primary/80 hover:text-primary hover:bg-primary/5 relative flex items-center justify-center",
+                  showAiPulse && "bg-primary/10 text-primary"
                 )}
               >
                 <Wand2
@@ -124,44 +124,44 @@ export const MainLayout: React.FC = () => {
                 />
                 {showAiPulse && (
                   <span className="absolute top-2 right-2 flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                   </span>
                 )}
               </Button>
             </Link>
 
-            <div className="h-6 w-px bg-[#1a472a]/10 mx-1 hidden md:block" />
+            <div className="h-6 w-px bg-primary/10 mx-1 hidden md:block" />
 
-            <div className="h-6 w-px bg-[#1a472a]/10 mx-1 hidden md:block" />
+            <div className="h-6 w-px bg-primary/10 mx-1 hidden md:block" />
 
             <Button
               type="text"
               shape="circle"
               icon={<Bell className="h-5 w-5" />}
-              className="text-[#1a472a]/80 hover:text-[#1a472a] hover:bg-[#1a472a]/5 hidden md:flex"
+              className="text-primary/80 hover:text-primary hover:bg-primary/5 hidden md:flex"
             />
 
             <Button
               type="text"
               shape="circle"
               icon={<User className="h-5 w-5" />}
-              className="text-[#1a472a]/80 hover:text-[#1a472a] hover:bg-[#1a472a]/5 hidden md:flex"
+              className="text-primary/80 hover:text-primary hover:bg-primary/5 hidden md:flex"
             />
 
             <Button
               type="text"
               shape="circle"
-              className="relative text-[#1a472a]/80 hover:text-[#1a472a] hover:bg-[#1a472a]/5 flex items-center justify-center"
+              className="relative text-primary/80 hover:text-primary hover:bg-primary/5 flex items-center justify-center"
             >
               <ShoppingBag className="h-5 w-5" />
-              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-[#1a472a] ring-2 ring-white" />
+              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary ring-2 ring-white" />
             </Button>
 
             <Button
               type="text"
               shape="circle"
-              className="md:hidden text-[#1a472a]"
+              className="md:hidden text-primary"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               icon={
                 isMenuOpen ? (

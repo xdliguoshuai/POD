@@ -24,10 +24,10 @@ export default function ProductSelector({ value, onChange, onReset }: Props) {
           return (
             <Button
               key={t}
-              type={isActive ? "primary" : "default"}
+              type="default"
               className={`h-24 flex flex-col gap-2 items-center justify-center ${
                 isActive
-                  ? "ring-2 ring-primary ring-offset-2"
+                  ? "bg-primary text-white hover:bg-primary/90 border-none ring-2 ring-primary ring-offset-2"
                   : "hover:border-primary/50"
               }`}
               onClick={() => {
