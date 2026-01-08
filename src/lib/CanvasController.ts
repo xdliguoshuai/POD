@@ -8,6 +8,10 @@ export class CanvasController {
 
   private listeners: Set<() => void> = new Set();
 
+  private isDragging = false;
+  private lastPosX = 0;
+  private lastPosY = 0;
+
   private constructor() {
     this.canvasManager = CanvasManager.getInstance();
     this.canvas = this.canvasManager.canvas;
@@ -35,6 +39,9 @@ export class CanvasController {
     this.canvas.on("selection:cleared", this.onSelectionCleared);
     this.canvas.on("selection:updated", this.onSelectionUpdated);
     this.canvas.on("mouse:wheel", this.onMouseWheel);
+    this.canvas.on("mouse:down", this.onMouseDown);
+    this.canvas.on("mouse:move", this.onMouseMove);
+    this.canvas.on("mouse:up", this.onMouseUp);
 
     // Object Events
     this.canvas.on("object:added", this.notifyListeners);
@@ -50,6 +57,9 @@ export class CanvasController {
     this.canvas.off("selection:cleared", this.onSelectionCleared);
     this.canvas.off("selection:updated", this.onSelectionUpdated);
     this.canvas.off("mouse:wheel", this.onMouseWheel);
+    this.canvas.off("mouse:down", this.onMouseDown);
+    this.canvas.off("mouse:move", this.onMouseMove);
+    this.canvas.off("mouse:up", this.onMouseUp);
     this.canvas.off("object:added", this.notifyListeners);
     this.canvas.off("object:removed", this.notifyListeners);
     this.canvas.off("object:modified", this.notifyListeners);
@@ -74,9 +84,7 @@ export class CanvasController {
   private onMouseWheel = (opt: any) => {
     const delta = opt.e.deltaY;
     let zoom = this.canvas.getZoom();
-    debugger;
     zoom *= 0.999 ** delta;
-    console.log("Zoom", zoom);
     if (zoom < 1) zoom = 1;
     if (zoom > 3) zoom = 3;
     this.canvas.zoomToPoint(
@@ -85,6 +93,53 @@ export class CanvasController {
     );
     opt.e.preventDefault();
     opt.e.stopPropagation();
+  };
+
+  private onMouseDown = (opt: any) => {
+    const evt = opt.e;
+    // Pan with Right mouse button
+    if (evt.button === 2) {
+      this.isDragging = true;
+      this.canvas.selection = false;
+      this.lastPosX = evt.clientX;
+      this.lastPosY = evt.clientY;
+
+      // Clear selection when starting to pan
+      this.canvas.discardActiveObject();
+      this.canvas.requestRenderAll();
+
+      // Change cursor to grabbing
+      this.canvas.defaultCursor = "grabbing";
+      this.canvas.hoverCursor = "grabbing";
+    }
+  };
+
+  private onMouseMove = (opt: any) => {
+    if (this.isDragging) {
+      const e = opt.e;
+      const vpt = this.canvas.viewportTransform;
+      if (!vpt) return;
+
+      vpt[4] += e.clientX - this.lastPosX;
+      vpt[5] += e.clientY - this.lastPosY;
+      this.canvas.requestRenderAll();
+      this.lastPosX = e.clientX;
+      this.lastPosY = e.clientY;
+    }
+  };
+
+  private onMouseUp = () => {
+    // on mouse up we want to recalculate new interaction
+    // for all objects, so we call setViewportTransform
+    if (this.isDragging) {
+      this.canvas.setViewportTransform(this.canvas.viewportTransform!);
+      this.isDragging = false;
+      this.canvas.selection = true;
+
+      // Reset cursor
+      this.canvas.defaultCursor = "default";
+      this.canvas.hoverCursor = "move";
+    }
   };
 
   private notifyListeners = () => {

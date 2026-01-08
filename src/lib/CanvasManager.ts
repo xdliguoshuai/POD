@@ -8,7 +8,11 @@ export class CanvasManager {
     canvasElement: HTMLCanvasElement,
     options?: Partial<fabric.CanvasOptions>
   ) {
-    this.canvas = new fabric.Canvas(canvasElement, options);
+    this.canvas = new fabric.Canvas(canvasElement, {
+      fireRightClick: true,
+      stopContextMenu: true,
+      ...options,
+    });
   }
 
   public static init(
