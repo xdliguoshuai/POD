@@ -156,7 +156,7 @@ export default function Visualization({
         width: 100, // Initial size, will be resized
         height: 100,
         backgroundColor: "#fff",
-        selection: false, // Disable group selection for now
+        selection: true, // Enable group selection
         controlsAboveOverlay: true,
       });
 
