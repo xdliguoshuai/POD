@@ -3,6 +3,7 @@ import * as fabric from "fabric";
 export class CanvasManager {
   private static instance: CanvasManager | null = null;
   public canvas: fabric.Canvas;
+  private printAreaCenter: { x: number; y: number } = { x: 250, y: 333 };
 
   private constructor(
     canvasElement: HTMLCanvasElement,
@@ -97,8 +98,10 @@ export class CanvasManager {
    */
   addText(text: string, options?: Partial<fabric.ITextProps>) {
     const textObj = new fabric.IText(text, {
-      left: 100,
-      top: 100,
+      left: this.printAreaCenter.x,
+      top: this.printAreaCenter.y,
+      originX: "center",
+      originY: "center",
       fontSize: 20,
       fill: "#000000",
       ...options,
@@ -118,8 +121,10 @@ export class CanvasManager {
       const img = await fabric.FabricImage.fromURL(url);
 
       img.set({
-        left: 100,
-        top: 100,
+        left: this.printAreaCenter.x,
+        top: this.printAreaCenter.y,
+        originX: "center",
+        originY: "center",
         ...options,
       });
 
@@ -135,6 +140,45 @@ export class CanvasManager {
     } catch (error) {
       console.error("Failed to add image:", error);
     }
+  }
+
+  /**
+   * Add or update a dashed rectangle representing the print area
+   */
+  setPrintArea(options: {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  }) {
+    this.printAreaCenter = { x: options.left, y: options.top };
+
+    let printArea = this.canvas
+      .getObjects()
+      .find((obj: any) => obj.id === "print-area") as fabric.Rect;
+
+    if (!printArea) {
+      printArea = new fabric.Rect({
+        ...options,
+        id: "print-area",
+        originX: "center",
+        originY: "center",
+        fill: "transparent",
+        stroke: "#194236",
+        strokeWidth: 1,
+        strokeDashArray: [5, 5],
+        selectable: false,
+        evented: false,
+        opacity: 0.5,
+      } as any);
+      this.canvas.add(printArea);
+    } else {
+      printArea.set(options);
+    }
+
+    // Ensure it's always behind other objects but above background
+    this.canvas.moveObjectTo(printArea, 1); // 0 is background image
+    this.canvas.requestRenderAll();
   }
 
   /**

@@ -264,6 +264,7 @@ export class CanvasController {
     const activeObjects = this.canvas.getActiveObjects();
 
     return objects
+      .filter((obj: any) => obj.id !== "print-area")
       .map((obj: any) => ({
         id: obj.id || Math.random().toString(36).substr(2, 9),
         type: obj.type,
@@ -326,5 +327,14 @@ export class CanvasController {
     this.canvas.discardActiveObject();
     this.canvas.requestRenderAll();
     this.notifyListeners();
+  }
+
+  public setPrintArea(options: {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  }) {
+    this.canvasManager.setPrintArea(options);
   }
 }

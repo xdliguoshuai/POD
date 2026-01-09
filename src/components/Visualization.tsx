@@ -163,11 +163,27 @@ export default function Visualization({
       // Initialize Controller
       const controller = CanvasController.init();
 
+      // Initial print area setup
+      controller.setPrintArea({
+        left: 500 * 0.5,
+        top: 667 * 0.5,
+        width: 500 * 0.44,
+        height: 667 * 0.5,
+      });
+
       // Resize observer to handle responsive container
       const resizeObserver = new ResizeObserver((entries) => {
         for (const entry of entries) {
           const { width, height } = entry.contentRect;
           manager.resize(width, height);
+
+          // Update print area on resize
+          controller.setPrintArea({
+            left: width * 0.5,
+            top: height * 0.5,
+            width: width * 0.44,
+            height: height * 0.5,
+          });
         }
       });
 
@@ -301,34 +317,8 @@ export default function Visualization({
               </div>
             )}
 
-            {/* Print Area Overlay - Kept as HTML overlay for now to preserve exact look */}
-            {isAreaActive ? (
-              <div
-                className="absolute border-2 border-primary/80 bg-primary/5 flex flex-col items-center justify-center transition-all duration-300 backdrop-blur-[1px] pointer-events-none"
-                style={overlayStyle}
-              >
-                <div className="opacity-50 flex flex-col items-center gap-2">
-                  <ScanLine size={24} className="text-primary" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
-                    {currentView} Print Area
-                  </span>
-                  <span className="text-[9px] font-mono text-primary/80">
-                    12" x 16"
-                  </span>
-                </div>
-
-                <div className="absolute -left-3 top-0 bottom-0 border-l border-primary/30 w-2 flex items-center">
-                  <span className="text-[8px] -rotate-90 text-primary/60 font-mono whitespace-nowrap -ml-4">
-                    Height
-                  </span>
-                </div>
-                <div className="absolute -top-3 left-0 right-0 border-t border-primary/30 h-2 flex justify-center">
-                  <span className="text-[8px] text-primary/60 font-mono -mt-3">
-                    Width
-                  </span>
-                </div>
-              </div>
-            ) : (
+            {/* Print Area Overlay removed, now handled by Fabric.js dashed rectangle */}
+            {!isAreaActive && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 {area.length > 0 && (
                   <div className="bg-black/60 text-white px-4 py-2 rounded-full text-xs backdrop-blur-md flex items-center gap-2">
