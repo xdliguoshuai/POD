@@ -264,7 +264,9 @@ export class CanvasController {
     const activeObjects = this.canvas.getActiveObjects();
 
     return objects
-      .filter((obj: any) => obj.id !== "print-area")
+      .filter(
+        (obj: any) => obj.id !== "print-area-bg" && obj.id !== "print-area-fg"
+      )
       .map((obj: any) => ({
         id: obj.id || Math.random().toString(36).substr(2, 9),
         type: obj.type,

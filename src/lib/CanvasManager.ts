@@ -107,6 +107,7 @@ export class CanvasManager {
       ...options,
     });
 
+    this.applyClipPath(textObj);
     this.canvas.add(textObj);
     this.canvas.setActiveObject(textObj);
     this.canvas.requestRenderAll();
@@ -128,6 +129,8 @@ export class CanvasManager {
         ...options,
       });
 
+      this.applyClipPath(img);
+
       // Scale down if too big
       if (img.width && img.width > 200) {
         img.scaleToWidth(200);
@@ -143,7 +146,7 @@ export class CanvasManager {
   }
 
   /**
-   * Add or update a dashed rectangle representing the print area
+   * Add or update a dual-layered rectangle representing the print area
    */
   setPrintArea(options: {
     left: number;
@@ -153,32 +156,110 @@ export class CanvasManager {
   }) {
     this.printAreaCenter = { x: options.left, y: options.top };
 
-    let printArea = this.canvas
-      .getObjects()
-      .find((obj: any) => obj.id === "print-area") as fabric.Rect;
+    const objects = this.canvas.getObjects();
+    let printAreaBg = objects.find(
+      (obj: any) => obj.id === "print-area-bg"
+    ) as fabric.Rect;
+    let printAreaFg = objects.find(
+      (obj: any) => obj.id === "print-area-fg"
+    ) as fabric.Rect;
 
-    if (!printArea) {
-      printArea = new fabric.Rect({
-        ...options,
-        id: "print-area",
-        originX: "center",
-        originY: "center",
-        fill: "transparent",
-        stroke: "#194236",
-        strokeWidth: 1,
-        strokeDashArray: [5, 5],
-        selectable: false,
-        evented: false,
-        opacity: 0.5,
+    const commonOptions = {
+      ...options,
+      originX: "center",
+      originY: "center",
+      fill: "transparent",
+      selectable: false,
+      evented: false,
+      opacity: 0.8,
+    };
+
+    // 1. Background Layer (White Solid)
+    if (!printAreaBg) {
+      printAreaBg = new fabric.Rect({
+        ...commonOptions,
+        id: "print-area-bg",
+        stroke: "#ffffff",
+        strokeWidth: 2,
       } as any);
-      this.canvas.add(printArea);
+      this.canvas.add(printAreaBg);
     } else {
-      printArea.set(options);
+      printAreaBg.set(commonOptions);
     }
 
-    // Ensure it's always behind other objects but above background
-    this.canvas.moveObjectTo(printArea, 1); // 0 is background image
+    // 2. Foreground Layer (Black Dashed)
+    if (!printAreaFg) {
+      printAreaFg = new fabric.Rect({
+        ...commonOptions,
+        id: "print-area-fg",
+        stroke: "#000000",
+        strokeWidth: 2,
+        strokeDashArray: [5, 5],
+      } as any);
+      this.canvas.add(printAreaFg);
+    } else {
+      printAreaFg.set(commonOptions);
+    }
+
+    // Ensure they are at the bottom but above background image
+    // bg at index 1, fg at index 2
+    this.canvas.moveObjectTo(printAreaBg, 1);
+    this.canvas.moveObjectTo(printAreaFg, 2);
+
+    this.updateObjectsClipPath();
     this.canvas.requestRenderAll();
+  }
+
+  /**
+   * Apply clip path to a single object
+   */
+  private applyClipPath(obj: fabric.Object) {
+    const printArea = this.canvas
+      .getObjects()
+      .find((o: any) => o.id === "print-area-fg") as fabric.Rect;
+    if (!printArea) return;
+
+    const clipPath = new fabric.Rect({
+      left: printArea.left,
+      top: printArea.top,
+      width: printArea.width,
+      height: printArea.height,
+      originX: "center",
+      originY: "center",
+      absolutePositioned: true,
+    });
+
+    obj.set({ clipPath });
+  }
+
+  /**
+   * Update clip path for all design objects
+   */
+  private updateObjectsClipPath() {
+    const printArea = this.canvas
+      .getObjects()
+      .find((o: any) => o.id === "print-area-fg") as fabric.Rect;
+    if (!printArea) return;
+
+    const clipPath = new fabric.Rect({
+      left: printArea.left,
+      top: printArea.top,
+      width: printArea.width,
+      height: printArea.height,
+      originX: "center",
+      originY: "center",
+      absolutePositioned: true,
+    });
+
+    this.canvas.getObjects().forEach((obj: any) => {
+      if (
+        obj.id !== "print-area-bg" &&
+        obj.id !== "print-area-fg" &&
+        obj !== this.canvas.backgroundImage
+      ) {
+        obj.set({ clipPath });
+      }
+    });
   }
 
   /**
