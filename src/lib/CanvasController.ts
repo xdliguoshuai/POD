@@ -23,6 +23,8 @@ export class CanvasController {
       CanvasController.instance.dispose();
     }
     CanvasController.instance = new CanvasController();
+    console.log("中心点：", CanvasController.instance.canvas.getCenterPoint());
+
     return CanvasController.instance;
   }
 
@@ -268,7 +270,7 @@ export class CanvasController {
         (obj: any) => obj.id !== "print-area-bg" && obj.id !== "print-area-fg"
       )
       .map((obj: any) => ({
-        id: obj.id || Math.random().toString(36).substr(2, 9),
+        id: obj.id || Math.random().toString(36).substring(2, 9),
         type: obj.type,
         name: obj.name || (obj.type === "i-text" ? obj.text : "Image"),
         visible: obj.visible,
@@ -338,5 +340,13 @@ export class CanvasController {
     height: number;
   }) {
     this.canvasManager.setPrintArea(options);
+  }
+
+  public alignObject(
+    obj: fabric.Object,
+    horizontal?: "left" | "center" | "right",
+    vertical?: "top" | "middle" | "bottom"
+  ) {
+    this.canvasManager.alignObject(obj, horizontal, vertical);
   }
 }

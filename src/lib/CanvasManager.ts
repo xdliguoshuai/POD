@@ -104,6 +104,10 @@ export class CanvasManager {
       originY: "center",
       fontSize: 20,
       fill: "#000000",
+      padding: 0,
+      lineHeight: 1,
+      stroke: undefined,
+      strokeWidth: 0,
       ...options,
     });
 
@@ -126,6 +130,7 @@ export class CanvasManager {
         top: this.printAreaCenter.y,
         originX: "center",
         originY: "center",
+        padding: 0,
         ...options,
       });
 
@@ -260,6 +265,52 @@ export class CanvasManager {
         obj.set({ clipPath });
       }
     });
+  }
+
+  /**
+   * Align an object relative to the print area
+   */
+  alignObject(
+    obj: fabric.Object,
+    horizontal?: "left" | "center" | "right",
+    vertical?: "top" | "middle" | "bottom"
+  ) {
+    const printArea = this.canvas
+      .getObjects()
+      .find((o: any) => o.id === "print-area-fg") as fabric.Rect;
+    if (!printArea) return;
+
+    const bounds = printArea.getBoundingRect();
+    const itemBounds = obj.getBoundingRect();
+
+    const zoom = this.canvas.getZoom();
+    const areaWidth = bounds.width / zoom;
+    const areaHeight = bounds.height / zoom;
+    const itemWidth = itemBounds.width / zoom;
+    const itemHeight = itemBounds.height / zoom;
+
+    if (horizontal) {
+      if (horizontal === "left") {
+        obj.set("left", printArea.left - areaWidth / 2 + itemWidth / 2);
+      } else if (horizontal === "center") {
+        obj.set("left", printArea.left);
+      } else if (horizontal === "right") {
+        obj.set("left", printArea.left + areaWidth / 2 - itemWidth / 2);
+      }
+    }
+
+    if (vertical) {
+      if (vertical === "top") {
+        obj.set("top", printArea.top - areaHeight / 2 + itemHeight / 2);
+      } else if (vertical === "middle") {
+        obj.set("top", printArea.top);
+      } else if (vertical === "bottom") {
+        obj.set("top", printArea.top + areaHeight / 2 - itemHeight / 2);
+      }
+    }
+
+    obj.setCoords();
+    this.canvas.requestRenderAll();
   }
 
   /**

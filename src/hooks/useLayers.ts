@@ -22,7 +22,7 @@ export function useLayers() {
 
     // Subscribe to changes
     const unsubscribe = controller.subscribe(updateLayers);
-
+    window.unsubscribe = controller.getLayers();
     return () => {
       unsubscribe();
     };

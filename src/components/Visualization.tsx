@@ -153,8 +153,8 @@ export default function Visualization({
   useEffect(() => {
     if (viewMode === "2d" && canvasRef.current) {
       const manager = CanvasManager.init(canvasRef.current, {
-        width: 500, // Initial size, will be resized
-        height: 667,
+        width: 100, // Initial size, will be resized
+        height: 100,
         backgroundColor: "#fff",
         selection: false, // Disable group selection for now
         controlsAboveOverlay: true,
@@ -168,7 +168,7 @@ export default function Visualization({
         left: 500 * 0.5,
         top: 667 * 0.5,
         width: 500 * 0.44,
-        height: 667 * 0.5,
+        height: 500 * 0.5,
       });
 
       // Resize observer to handle responsive container
@@ -176,13 +176,12 @@ export default function Visualization({
         for (const entry of entries) {
           const { width, height } = entry.contentRect;
           manager.resize(width, height);
-
           // Update print area on resize
           controller.setPrintArea({
             left: width * 0.5,
             top: height * 0.5,
-            width: width * 0.44,
-            height: height * 0.5,
+            width: 500 * 0.44,
+            height: 500 * 0.5,
           });
         }
       });

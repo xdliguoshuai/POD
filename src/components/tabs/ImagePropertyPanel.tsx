@@ -15,6 +15,12 @@ import {
   FlipHorizontal,
   FlipVertical,
   RefreshCw,
+  AlignStartHorizontal,
+  AlignCenterHorizontal,
+  AlignEndHorizontal,
+  AlignStartVertical,
+  AlignCenterVertical,
+  AlignEndVertical,
 } from "lucide-react";
 import { CanvasController } from "../../lib/CanvasController";
 import { useActiveObject } from "../../hooks/useActiveObject";
@@ -120,6 +126,63 @@ export const ImagePropertyPanel: React.FC<ImagePropertyPanelProps> = ({
           <h3 className="text-sm font-bold uppercase tracking-widest text-primary">
             Image Properties
           </h3>
+        </div>
+
+        {/* Alignment */}
+        <div className="space-y-3">
+          <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            Alignment
+          </label>
+          <Space.Compact block>
+            <Tooltip title="Left">
+              <Button
+                icon={<AlignStartVertical size={16} />}
+                onClick={() => controller.alignObject(activeObject, "left")}
+                className="flex-1"
+              />
+            </Tooltip>
+            <Tooltip title="Center">
+              <Button
+                icon={<AlignCenterHorizontal size={16} />}
+                onClick={() => controller.alignObject(activeObject, "center")}
+                className="flex-1"
+              />
+            </Tooltip>
+            <Tooltip title="Right">
+              <Button
+                icon={<AlignEndVertical size={16} />}
+                onClick={() => controller.alignObject(activeObject, "right")}
+                className="flex-1"
+              />
+            </Tooltip>
+            <Tooltip title="Top">
+              <Button
+                icon={<AlignStartHorizontal size={16} />}
+                onClick={() =>
+                  controller.alignObject(activeObject, undefined, "top")
+                }
+                className="flex-1 border-l-0"
+              />
+            </Tooltip>
+            <Tooltip title="Middle">
+              <Button
+                icon={<AlignCenterVertical size={16} />}
+                onClick={() =>
+                  controller.alignObject(activeObject, undefined, "middle")
+                }
+                className="flex-1"
+              />
+            </Tooltip>
+            <Tooltip title="Bottom">
+              <Button
+                icon={<AlignEndHorizontal size={16} />}
+                onClick={() =>
+                  controller.alignObject(activeObject, undefined, "bottom")
+                }
+                className="flex-1"
+              />
+            </Tooltip>
+          </Space.Compact>
         </div>
 
         {/* Rotation */}

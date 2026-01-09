@@ -14,6 +14,12 @@ import {
   Bold,
   Italic,
   Underline,
+  AlignStartHorizontal,
+  AlignCenterHorizontal,
+  AlignEndHorizontal,
+  AlignStartVertical,
+  AlignCenterVertical,
+  AlignEndVertical,
   AlignLeft,
   AlignCenter,
   AlignRight,
@@ -101,7 +107,7 @@ export const TextPropertyPanel: React.FC<TextPropertyPanelProps> = ({
     fontStyle: "normal",
     underline: false,
     charSpacing: 0,
-    lineHeight: 1.16,
+    lineHeight: 1,
     stroke: "#000000",
     strokeWidth: 0,
     shadowColor: "rgba(0,0,0,0.3)",
@@ -290,93 +296,122 @@ export const TextPropertyPanel: React.FC<TextPropertyPanelProps> = ({
             />
           </div>
 
-          {/* Styles & Alignment */}
-          <div className="grid grid-cols-2 gap-3">
-            <Space.Compact block>
-              <Tooltip title="Bold">
-                <Button
-                  icon={<Bold size={16} />}
-                  type={
-                    properties.fontWeight === "bold" ? "primary" : "default"
-                  }
-                  onClick={() =>
-                    handlePropertyChange(
-                      "fontWeight",
-                      properties.fontWeight === "bold" ? "normal" : "bold"
-                    )
-                  }
-                  className={cn(
-                    "flex-1",
-                    properties.fontWeight === "bold" && "bg-primary"
-                  )}
-                />
-              </Tooltip>
-              <Tooltip title="Italic">
-                <Button
-                  icon={<Italic size={16} />}
-                  type={
-                    properties.fontStyle === "italic" ? "primary" : "default"
-                  }
-                  onClick={() =>
-                    handlePropertyChange(
-                      "fontStyle",
-                      properties.fontStyle === "italic" ? "normal" : "italic"
-                    )
-                  }
-                  className={cn(
-                    "flex-1",
-                    properties.fontStyle === "italic" && "bg-primary"
-                  )}
-                />
-              </Tooltip>
-              <Tooltip title="Underline">
-                <Button
-                  icon={<Underline size={16} />}
-                  type={properties.underline ? "primary" : "default"}
-                  onClick={() =>
-                    handlePropertyChange("underline", !properties.underline)
-                  }
-                  className={cn("flex-1", properties.underline && "bg-primary")}
-                />
-              </Tooltip>
-            </Space.Compact>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <Space.Compact block>
+                <Tooltip title="Bold">
+                  <Button
+                    icon={<Bold size={16} />}
+                    type={
+                      properties.fontWeight === "bold" ? "primary" : "default"
+                    }
+                    onClick={() =>
+                      handlePropertyChange(
+                        "fontWeight",
+                        properties.fontWeight === "bold" ? "normal" : "bold"
+                      )
+                    }
+                    className={cn(
+                      "flex-1",
+                      properties.fontWeight === "bold" && "bg-primary"
+                    )}
+                  />
+                </Tooltip>
+                <Tooltip title="Italic">
+                  <Button
+                    icon={<Italic size={16} />}
+                    type={
+                      properties.fontStyle === "italic" ? "primary" : "default"
+                    }
+                    onClick={() =>
+                      handlePropertyChange(
+                        "fontStyle",
+                        properties.fontStyle === "italic" ? "normal" : "italic"
+                      )
+                    }
+                    className={cn(
+                      "flex-1",
+                      properties.fontStyle === "italic" && "bg-primary"
+                    )}
+                  />
+                </Tooltip>
+                <Tooltip title="Underline">
+                  <Button
+                    icon={<Underline size={16} />}
+                    type={properties.underline ? "primary" : "default"}
+                    onClick={() =>
+                      handlePropertyChange("underline", !properties.underline)
+                    }
+                    className={cn(
+                      "flex-1",
+                      properties.underline && "bg-primary"
+                    )}
+                  />
+                </Tooltip>
+              </Space.Compact>
+            </div>
+          </div>
 
+          <div className="space-y-3">
+            <label className="mt-4! text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Alignment
+            </label>
             <Space.Compact block>
               <Tooltip title="Left">
                 <Button
-                  icon={<AlignLeft size={16} />}
-                  type={properties.textAlign === "left" ? "primary" : "default"}
-                  onClick={() => handlePropertyChange("textAlign", "left")}
-                  className={cn(
-                    "flex-1",
-                    properties.textAlign === "left" && "bg-primary"
-                  )}
+                  icon={<AlignStartVertical size={16} />}
+                  onClick={() => {
+                    controller.alignObject(activeObject, "left");
+                    handlePropertyChange("textAlign", "left");
+                  }}
+                  className="flex-1"
                 />
               </Tooltip>
               <Tooltip title="Center">
                 <Button
-                  icon={<AlignCenter size={16} />}
-                  type={
-                    properties.textAlign === "center" ? "primary" : "default"
-                  }
-                  onClick={() => handlePropertyChange("textAlign", "center")}
-                  className={cn(
-                    "flex-1",
-                    properties.textAlign === "center" && "bg-primary"
-                  )}
+                  icon={<AlignCenterHorizontal size={16} />}
+                  onClick={() => {
+                    controller.alignObject(activeObject, "center");
+                    handlePropertyChange("textAlign", "center");
+                  }}
+                  className="flex-1"
                 />
               </Tooltip>
               <Tooltip title="Right">
                 <Button
-                  icon={<AlignRight size={16} />}
-                  type={
-                    properties.textAlign === "right" ? "primary" : "default"
+                  icon={<AlignEndVertical size={16} />}
+                  onClick={() => {
+                    controller.alignObject(activeObject, "right");
+                    handlePropertyChange("textAlign", "right");
+                  }}
+                  className="flex-1"
+                />
+              </Tooltip>
+              <Tooltip title="Top">
+                <Button
+                  icon={<AlignStartHorizontal size={16} />}
+                  onClick={() =>
+                    controller.alignObject(activeObject, undefined, "top")
                   }
-                  onClick={() => handlePropertyChange("textAlign", "right")}
-                  className={cn(
-                    "flex-1",
-                    properties.textAlign === "right" && "bg-primary"
-                  )}
+                  className="flex-1 border-l-0"
+                />
+              </Tooltip>
+              <Tooltip title="Middle">
+                <Button
+                  icon={<AlignCenterVertical size={16} />}
+                  onClick={() =>
+                    controller.alignObject(activeObject, undefined, "middle")
+                  }
+                  className="flex-1"
+                />
+              </Tooltip>
+              <Tooltip title="Bottom">
+                <Button
+                  icon={<AlignEndHorizontal size={16} />}
+                  onClick={() =>
+                    controller.alignObject(activeObject, undefined, "bottom")
+                  }
+                  className="flex-1"
                 />
               </Tooltip>
             </Space.Compact>
