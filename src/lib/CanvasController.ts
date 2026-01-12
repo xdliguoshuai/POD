@@ -216,15 +216,28 @@ export class CanvasController {
   }
   /**
    * Reorder a layer (object) in the canvas stack
+   * @param obj The object to move
+   * @param newIndex The new index in the filtered design layers list (0 is top)
    */
-  public reorderLayer(oldIndex: number, newIndex: number) {
+  public reorderLayer(obj: fabric.Object, newIndex: number) {
     const objects = this.canvas.getObjects();
-    const obj = objects[oldIndex];
-    if (!obj) return;
+    const designLayers = this.getLayers();
+    const totalDesignLayers = designLayers.length;
 
-    // In Fabric.js 7+, we use canvas.insertAt to reorder
-    this.canvas.remove(obj);
-    this.canvas.insertAt(newIndex, obj);
+    // Find the base index (the lowest index among all design layers)
+    // If no design layers exist, we don't need to do anything
+    if (totalDesignLayers === 0) return;
+
+    const designLayerRefs = designLayers.map((l) => l.ref);
+    const baseIndex = Math.min(
+      ...designLayerRefs.map((ref) => objects.indexOf(ref))
+    );
+
+    // Fabric.js stack is bottom-to-top.
+    // Our list is top-to-bottom (0 is top).
+    const canvasIndex = baseIndex + (totalDesignLayers - 1 - newIndex);
+
+    this.canvas.moveObjectTo(obj, canvasIndex);
     this.canvas.requestRenderAll();
     this.notifyListeners();
   }

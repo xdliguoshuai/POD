@@ -185,15 +185,12 @@ export function LayersTab() {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = layers.findIndex((l) => l.id === active.id);
+      const activeLayer = layers.find((l) => l.id === active.id);
       const newIndex = layers.findIndex((l) => l.id === over.id);
 
-      // Fabric.js stack is bottom-to-top, our list is top-to-bottom (visual order)
-      // So we need to invert the indices for the canvas reordering
-      const canvasOldIndex = layers.length - 1 - oldIndex;
-      const canvasNewIndex = layers.length - 1 - newIndex;
-
-      controller.reorderLayer(canvasOldIndex, canvasNewIndex);
+      if (activeLayer) {
+        controller.reorderLayer(activeLayer.ref, newIndex);
+      }
     }
   };
 
