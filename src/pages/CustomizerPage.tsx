@@ -34,8 +34,10 @@ import { PremiumTab } from "../components/tabs/PremiumTab";
 import { FillTab } from "../components/tabs/FillTab";
 import { AIAssistTab } from "../components/tabs/AIAssistTab";
 import { Lock } from "lucide-react";
+import { useLoading } from "../hooks/useLoading";
 
 export const CustomizerPage: React.FC = () => {
+  const { setLoading } = useLoading();
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("product");
   const initialProductData = getProductById(productId);
@@ -168,20 +170,13 @@ export const CustomizerPage: React.FC = () => {
 
             {activeTab === "text" && (
               <SidebarSection title="Text Editor" required defaultOpen={true}>
-                <TextLayerInput
-                  text={textConfig.text}
-                  font={textConfig.font}
-                  color={textConfig.color}
-                  onChange={(updates) =>
-                    setTextConfig((prev) => ({ ...prev, ...updates }))
-                  }
-                />
+                <TextLayerInput onAdd={() => setActiveTab("layers")} />
               </SidebarSection>
             )}
 
             {activeTab === "uploads" && (
               <SidebarSection title="Uploads" required defaultOpen={true}>
-                <UploadsTab />
+                <UploadsTab onAdd={() => setActiveTab("layers")} />
               </SidebarSection>
             )}
 
